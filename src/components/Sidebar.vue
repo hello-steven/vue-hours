@@ -6,9 +6,12 @@
     <div class="panel-body">
       <h1 class="text-center">{{ time }} hours</h1>
     </div>
+    <hr>
     <div class="panel-body text-center">
+      <h2>Project Timer</h2>
       <p class="counter">{{counter.s | formatCounter}}</p>
-      <button class="timer" :class="{'active': counterStatus}" @click="toggleTime()">{{counterStatus ? 'Stop' : 'Start'}}</button>
+      <button class="timer" :class="{'active': counterStatus}" @click="toggleTime()">{{counterStatus ? 'Pause' : 'Start'}}</button>
+      <button class="log" :disabled="counter.s > 0 && !counterStatus ? false : true">Log</button>
     </div>
   </div>
 </template>
@@ -25,25 +28,27 @@ export default {
         s: 0,
         m: 0,
         h: 0,
-        d: 0
+        timestampStart: [],
+        timestampPause: [],
+        timestampEnd: 0
       },
       counterStatus: false,
       timer: null
     }
   },
   filters: {
-    formatCounter: function(totalSeconds) {
-      var hours   = Math.floor(totalSeconds / 3600);
-      var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
-      var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+    formatCounter: function (totalSeconds) {
+      var hours = Math.floor(totalSeconds / 3600)
+      var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60)
+      var seconds = totalSeconds - (hours * 3600) - (minutes * 60)
 
       // round seconds
       seconds = Math.round(seconds * 100) / 100
 
-      var result = (hours < 10 ? "0" + hours : hours);
-          result += ":" + (minutes < 10 ? "0" + minutes : minutes);
-          result += ":" + (seconds  < 10 ? "0" + seconds : seconds);
-      return result;
+      var result = (hours < 10 ? '0' + hours : hours)
+      result += ':' + (minutes < 10 ? '0' + minutes : minutes)
+      result += ':' + (seconds < 10 ? '0' + seconds : seconds)
+      return result
     }
   },
   methods: {
@@ -52,10 +57,21 @@ export default {
       if (!this.counterStatus) {
         clearInterval(this.timer)
         this.timer = null
+        if (!this.counter.timestampPause[0]) {
+          this.counter.timestampPause = [Date.now()]
+        } else {
+          this.counter.timestampPause.push(Date.now())
+        }
+        this.counter.timestampEnd = Date.now()
       }
       if (!this.counterStatus) return false
+      if (!this.counter.timestampStart[0]) {
+        this.counter.timestampStart = [Date.now()]
+      } else {
+        this.counter.timestampStart.push(Date.now())
+      }
       this.timer = window.setInterval(() => {
-        this.counter.s++;
+        this.counter.s++
         // if (this.counter.s >= 59) {
         //   this.counter.s = 0
         //   this.counter.m++
@@ -77,7 +93,11 @@ export default {
 }
 </script>
 
-<style scss>
+<style lang="scss">
+.counter {
+  font-size: 28px;
+  font-weight: bold;
+}
 button {
   background-color: rgb(133, 255, 216);
   padding: 1em;
@@ -88,11 +108,22 @@ button {
   border: solid #000 2px;
   box-shadow: 3px 3px 0px #000;
   border-radius: 4px;
-}
-button.active {
-  background-color: rgb(255, 133, 143);
-}
-button:active {
-  box-shadow: none;
+  &:first-of-type {
+    margin-right: .5em;
+  }
+  &.log {
+    background-color: rgb(133, 233, 255);
+  }
+  &.active,
+  &.log.active {
+    background-color: rgb(255, 133, 143);
+  }
+  &:disabled,
+  &.log:disabled {
+    background-color: gray;
+  }
+  &:active {
+    box-shadow: none;
+  }
 }
 </style>
