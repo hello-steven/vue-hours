@@ -32,7 +32,7 @@
       </div>
     </div>
     <button class="btn btn-primary" @click="save()">Start</button>
-    <button v-link="'/time-entries'" class="btn btn-danger">Cancel</button>
+    <button class="btn btn-danger">Cancel</button>
     <hr>
   </div>
 </template>
