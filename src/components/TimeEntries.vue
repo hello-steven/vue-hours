@@ -7,39 +7,34 @@
     </button>
     <hr>
     <div class="time-entries">
+      <p>Recent Entries:</p>
       <p v-if="!timeEntries.length"><strong>No time entries yet</strong></p>
       <div class="list-group">
         <a class="list-group-item" v-for="(timeEntry, entryId) in timeEntries" :key="entryId">
-          <div class="row">
-            <div class="col-sm-2 user-details">
-              <img :src="timeEntry.user.image" class="avatar img-circle img-responsive" />
-              <p class="text-center">
-                <strong>
-                  {{ timeEntry.user.firstName }}
-                  {{ timeEntry.user.lastName }}
-                </strong>
-              </p>
-            </div>
-            <div class="col-sm-2 text-center time-block">
-              <h3 class="list-group-item-text total-time">
-                <i class="glyphicon glyphicon-time"></i>
-                {{ timeEntry.totalTime }} <small>hours</small>
-              </h3>
-              <p class="label label-primary text-center">
-                <i class="glyphicon glyphicon-calendar"></i>
-                {{ timeEntry.date }}
-              </p>
-            </div>
-            <div class="col-sm-7 comment-section">
-              <p>{{ timeEntry.comment }}</p>
-            </div>
-            <div class="col-sm-1">
-              <button
-                class="btn btn-xs btn-danger delete-button"
-                @click="deleteTimeEntry(timeEntry)">
-                X
-              </button>
-            </div>
+          <div class="user-details">
+            <p><strong>Start/Stop</strong></p>
+            <p class="start-date">
+              @
+              {{ timeEntry.startDate}}
+            </p>
+            <p class="end-date">
+              @
+              {{ timeEntry.endDate}}
+            </p>
+          </div>
+          <div class="text-center time-block">
+            <h3 class="list-group-item-text total-time" :inner-html.prop="timeEntry.totalTime | formatTotal">
+            </h3>
+          </div>
+          <div class="comment-section">
+            <p>{{ timeEntry.comment }}</p>
+          </div>
+          <div class="entry-options">
+            <button
+              class="btn btn-xs btn-danger delete-button"
+              @click="deleteTimeEntry(timeEntry)">
+              X
+            </button>
           </div>
         </a>
       </div>
@@ -48,24 +43,25 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
-  data () {
-    // We want to start with an existing time entry
-    let existingEntry = {
-      user: {
-        firstName: 'Steven',
-        lastName: 'Price',
-        email: 'sprice@hansondodge.com',
-        image: '/img/logo.82b9c7a5.png'
-      },
-      comment: 'First time entry',
-      totalTime: 1.5,
-      date: '2016-04-08'
-    }
-    return {
-      // Start out with the existing entry
-      // by placing it in the array
-      timeEntries: [existingEntry]
+  props: {
+    timeEntries: Array
+  },
+  filters: {
+    formatTotal: function (total) {
+      let s = moment.duration(total).seconds()
+      let m = moment.duration(total).minutes()
+      let h = moment.duration(total).hours()
+
+      let formatted = '<i class="glyphicon glyphicon-time"></i> ' + s + ' <small>seconds</small>'
+      if (m >= 1) {
+        formatted = '<i class="glyphicon glyphicon-time"></i> ' + m + ' <small>minutes</small>'
+      }
+      if (h >= 1) {
+        formatted = '<i class="glyphicon glyphicon-time"></i> ' + h + ' <small>hours</small>'
+      }
+      return formatted
     }
   },
   methods: {
@@ -73,8 +69,7 @@ export default {
     deleteTimeEntry (timeEntry) {
       let index = this.timeEntries.indexOf(timeEntry)
       if (window.confirm('Are you sure you want to delete this time entry?')) {
-        this.timeEntries.splice(index, 1)
-        this.$dispatch('deleteTime', timeEntry)
+        this.$emit('delete-entry', index)
       }
     }
   },
@@ -87,22 +82,30 @@ export default {
 }
 </script>
 
-<style>
-  .avatar {
-    height: 75px;
-    margin: 0 auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
+<style lang="scss" scoped>
+  .list-group-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .list-group-item-text {
+    margin: 0;
   }
   .user-details {
-    background-color: #f5f5f5;
     border-right: 1px solid #ddd;
-    margin: -10px 0;
+    padding-right: 20px;
+    margin: 0;
   }
   .time-block {
-    padding: 10px;
+    padding: 0 10px 10px;
+    border-right: 1px solid #ddd;
+    width: 150px;
   }
   .comment-section {
     padding: 20px;
+    flex: 1;
+  }
+  .entry-options {
+    align-self: flex-start;
   }
 </style>

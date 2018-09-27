@@ -1,40 +1,28 @@
 <template>
   <div class="panel panel-default">
+    <div class="panel-body text-center">
+      <h2>Project Timer</h2>
+      <p class="counter">{{counter.s | formatCounter}}</p>
+      <button class="timer" :class="{'active': counter.counterStatus}" @click="$emit('toggle-time')">{{counter.counterStatus ? 'Pause' : 'Start'}}</button>
+      <button class="log" :disabled="counter.s > 0 && !counter.counterStatus ? false : true" @click="$emit('log-time'); getRunningTotal()">Log</button>
+    </div>
     <div class="panel-heading">
       <h1 class="text-center">Total Time</h1>
     </div>
     <div class="panel-body">
-      <h1 class="text-center">{{ time }} hours</h1>
-    </div>
-    <hr>
-    <div class="panel-body text-center">
-      <h2>Project Timer</h2>
-      <p class="counter">{{counter.s | formatCounter}}</p>
-      <button class="timer" :class="{'active': counterStatus}" @click="toggleTime()">{{counterStatus ? 'Pause' : 'Start'}}</button>
-      <button class="log" :disabled="counter.s > 0 && !counterStatus ? false : true">Log</button>
+      <h1 class="text-center">{{ runningTotal | formatRunningTotal }}</h1>
     </div>
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'Sidebar',
   props: {
-    time: Number
-  },
-  data () {
-    return {
-      counter: {
-        s: 0,
-        m: 0,
-        h: 0,
-        timestampStart: [],
-        timestampPause: [],
-        timestampEnd: 0
-      },
-      counterStatus: false,
-      timer: null
-    }
+    time: Number,
+    counter: Object,
+    timeEntries: Array
   },
   filters: {
     formatCounter: function (totalSeconds) {
@@ -49,45 +37,32 @@ export default {
       result += ':' + (minutes < 10 ? '0' + minutes : minutes)
       result += ':' + (seconds < 10 ? '0' + seconds : seconds)
       return result
+    },
+    formatRunningTotal: function (totalTime) {
+      let s = moment.duration(totalTime).seconds()
+      let m = moment.duration(totalTime).minutes()
+      let h = moment.duration(totalTime).hours()
+
+      let formatted = s + ' seconds'
+      if (m >= 1) {
+        formatted = m + ' minutes'
+      }
+      if (h >= 1) {
+        formatted = h + ' hours'
+      }
+      return formatted
     }
   },
+  created () {
+    this.getRunningTotal()
+  },
   methods: {
-    toggleTime () {
-      this.counterStatus = !this.counterStatus
-      if (!this.counterStatus) {
-        clearInterval(this.timer)
-        this.timer = null
-        if (!this.counter.timestampPause[0]) {
-          this.counter.timestampPause = [Date.now()]
-        } else {
-          this.counter.timestampPause.push(Date.now())
-        }
-        this.counter.timestampEnd = Date.now()
-      }
-      if (!this.counterStatus) return false
-      if (!this.counter.timestampStart[0]) {
-        this.counter.timestampStart = [Date.now()]
-      } else {
-        this.counter.timestampStart.push(Date.now())
-      }
-      this.timer = window.setInterval(() => {
-        this.counter.s++
-        // if (this.counter.s >= 59) {
-        //   this.counter.s = 0
-        //   this.counter.m++
-        // } else {
-        //   this.counter.s++
-        // }
-        // if (this.counter.m >= 59) {
-        //   this.counter.m = 0
-        //   this.counter.h++
-        // }
-        // if (this.counter.h >= 7) {
-        //   this.counter.h = 0
-        //   this.counter.d++
-        // }
-      }, 1000)
-      this.timer()
+    getRunningTotal: function () {
+      let newRunningTotal = 0
+      this.timeEntries.map((entry) => {
+        newRunningTotal += entry.totalTime
+      })
+      this.runningTotal = newRunningTotal
     }
   }
 }
