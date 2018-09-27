@@ -1,5 +1,6 @@
 <template>
   <div class="form-horizontal">
+    <h2>Manual Time Entry</h2>
     <div class="form-group">
       <div class="col-sm-6">
         <label>Date</label>
