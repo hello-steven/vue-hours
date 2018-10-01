@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Sidebar class="sidebar" :timeEntries="timeEntries" :time="totalTime" :counter="counter" v-on:toggle-time="toggleTime" v-on:log-time="logTime"></Sidebar>
+    <Sidebar class="sidebar" :timeEntries="timeEntries" :time="totalTime" :runningTotal="runningTotal" :counter="counter" v-on:toggle-time="toggleTime" v-on:log-time="logTime"></Sidebar>
     <div class="main">
       <h1>Time Logs</h1>
       <hr>
@@ -55,18 +55,18 @@ export default {
     TimeEntries
   },
   data () {
-    let existingEntry = {
-      user: {
-        firstName: 'Steven',
-        lastName: 'Price',
-        email: 'sprice@hansondodge.com'
-      },
-      branch: 'inpro-66-headline-styles',
-      comment: 'inpro-66-headline-styles',
-      totalTime: 3093450,
-      startDate: '2016-04-08 10:15 am',
-      endDate: '2016-04-08 12:00 pm'
-    }
+    // let existingEntry = {
+    //   user: {
+    //     firstName: 'Steven',
+    //     lastName: 'Price',
+    //     email: 'sprice@hansondodge.com'
+    //   },
+    //   branch: 'inpro-66-headline-styles',
+    //   comment: 'inpro-66-headline-styles',
+    //   totalTime: 3093450,
+    //   startDate: '2016-04-08 10:15 am',
+    //   endDate: '2016-04-08 12:00 pm'
+    // }
     return {
       // Start with the same value as our
       // first time entry. Hard-coded for now
@@ -85,8 +85,20 @@ export default {
         counterStatus: false,
         timer: null
       },
-      timeEntries: [existingEntry]
+      timeEntries: [],
+      runningTotal: 0
     }
+  },
+  mounted () {
+    console.log({
+      created: true
+    })
+    let newRunningTotal = 0
+    this.timeEntries.map((entry) => {
+      if (!entry.totalTime) return false
+      newRunningTotal += entry.totalTime
+    })
+    this.runningTotal = newRunningTotal
   },
   filters: {
     formatDate: function (date) {
@@ -160,6 +172,24 @@ export default {
       }, 1000)
       return this.timer
     },
+    getRunningTotal: function () {
+      let newRunningTotal = 0
+      console.log({
+        entries: this.timeEntries
+      })
+      this.timeEntries.map((entry) => {
+        console.log({
+          entry: entry
+        })
+        if (!entry.totalTime) return false
+        newRunningTotal += entry.totalTime
+      })
+      this.runningTotal = newRunningTotal
+      console.log({
+        runningTotal: this.runningTotal,
+        newRunningTotal: newRunningTotal
+      })
+    },
     logTime () {
       let formatDate = this.$options.filters.formatDate
       let newCounter = this.counter
@@ -189,6 +219,7 @@ export default {
         startDate: formatDate(newCounter.timestampStart[0]),
         endDate: formatDate(newCounter.timestampEnd)
       }
+      this.getRunningTotal()
       this.timeEntries.unshift(newEntry)
     },
     deleteEntry (index) {
