@@ -4,13 +4,13 @@
       <h2>Project Timer</h2>
       <p class="counter">{{counter.s | formatCounter}}</p>
       <button class="timer" :class="{'active': counter.counterStatus}" @click="$emit('toggle-time')">{{counter.counterStatus ? 'Pause' : 'Start'}}</button>
-      <button class="log" :disabled="counter.s > 0 && !counter.counterStatus ? false : true" @click="$emit('log-time'); getRunningTotal()">Log</button>
+      <button class="log" :disabled="counter.s > 0 && !counter.counterStatus ? false : true" @click="$emit('log-time')">Log</button>
     </div>
     <div class="panel-heading">
       <h1 class="text-center">Total Time</h1>
     </div>
     <div class="panel-body">
-      <h1 class="text-center">{{ runningTotal | formatRunningTotal }}</h1>
+      <h1 class="text-center">{{ timeEntries | formatRunningTotal }}</h1>
     </div>
   </div>
 </template>
@@ -38,10 +38,14 @@ export default {
       result += ':' + (seconds < 10 ? '0' + seconds : seconds)
       return result
     },
-    formatRunningTotal: function (totalTime) {
-      let s = moment.duration(totalTime).seconds()
-      let m = moment.duration(totalTime).minutes()
-      let h = moment.duration(totalTime).hours()
+    formatRunningTotal: function (entries) {
+      let newRunningTotal = 0
+      entries.map((entry) => {
+        newRunningTotal += entry.totalTime
+      })
+      let s = moment.duration(newRunningTotal).seconds()
+      let m = moment.duration(newRunningTotal).minutes()
+      let h = moment.duration(newRunningTotal).hours()
 
       let formatted = s + ' seconds'
       if (m >= 1) {
@@ -51,18 +55,6 @@ export default {
         formatted = h + ' hours'
       }
       return formatted
-    }
-  },
-  created () {
-    this.getRunningTotal()
-  },
-  methods: {
-    getRunningTotal: function () {
-      let newRunningTotal = 0
-      this.timeEntries.map((entry) => {
-        newRunningTotal += entry.totalTime
-      })
-      this.runningTotal = newRunningTotal
     }
   }
 }

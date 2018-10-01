@@ -28,7 +28,7 @@
           <div class="entry-options">
             <button
               class="btn btn-xs btn-danger delete-button"
-              @click="deleteTimeEntry(timeEntry)">
+              @click="deleteCurrent()">
               X
             </button>
           </div>
@@ -36,7 +36,7 @@
       </div>
       <TimeEntries class="entries" :timeEntries="timeEntries" v-on:delete-entry="deleteEntry"></TimeEntries>
       <hr>
-      <LogTime class="logger"></LogTime>
+      <LogTime class="logger" v-on:log-entry="logEntry"></LogTime>
     </div>
   </div>
 </template>
@@ -111,17 +111,6 @@ export default {
       return formatted
     }
   },
-  events: {
-    // Increment the totalTime value based on the new
-    // time entry that is dispatched up
-    timeUpdate (timeEntry) {
-      this.totalTime += parseFloat(timeEntry.totalTime)
-    },
-    // Decrement totalTime when a time entry is deleted
-    deleteTime (timeEntry) {
-      this.totalTime -= parseFloat(timeEntry.totalTime)
-    }
-  },
   methods: {
     toggleTime () {
       this.counter.counterStatus = !this.counter.counterStatus
@@ -190,6 +179,39 @@ export default {
         endDate: formatDate(newCounter.timestampEnd)
       }
       this.timeEntries.unshift(newEntry)
+    },
+    logEntry (timeEntry) {
+      let formatDate = this.$options.filters.formatDate
+      let endDate = moment(timeEntry.date).add(timeEntry.totalTime, 'h')
+      let duration = timeEntry.totalTime * 3600000 // milliseconds
+      let newEntry = {
+        user: {
+          firstName: 'Steven',
+          lastName: 'Price',
+          email: 'sprice@hansondodge.com'
+        },
+        branch: timeEntry.comment,
+        comment: timeEntry.comment,
+        totalTime: duration,
+        startDate: formatDate(timeEntry.date),
+        endDate: formatDate(endDate)
+      }
+      this.timeEntries.unshift(newEntry)
+    },
+    deleteCurrent () {
+      if (this.counter.counterStatus) {
+        this.toggleTime()
+      }
+      this.counter = {
+        s: 0,
+        m: 0,
+        h: 0,
+        timestampStart: [],
+        timestampPause: [],
+        timestampEnd: 0,
+        counterStatus: false,
+        timer: null
+      }
     },
     deleteEntry (index) {
       this.timeEntries.splice(index, 1)
