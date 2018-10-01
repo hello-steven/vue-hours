@@ -5,7 +5,7 @@
       <div class="col-sm-6">
         <label>Date</label>
         <input
-          type="date"
+          type="datetime-local"
           class="form-control"
           v-model="timeEntry.date"
           placeholder="Date"
@@ -23,7 +23,7 @@
     </div>
     <div class="form-group">
       <div class="col-sm-12">
-        <label>Comment</label>
+        <label>Project/Comments</label>
         <input
           type="text"
           class="form-control"
@@ -32,8 +32,8 @@
         />
       </div>
     </div>
-    <button class="btn btn-primary" @click="save()">Start</button>
-    <button class="btn btn-danger">Cancel</button>
+    <button class="btn btn-primary" @click="save()">Log</button>
+    <button class="btn btn-danger" @click="clear()">Clear</button>
     <hr>
   </div>
 </template>
@@ -48,8 +48,7 @@ export default {
         user: {
           firstName: 'Steven',
           lastName: 'Price',
-          email: 'sprice@hansondodge.com',
-          image: './assets/logo.png'
+          email: 'sprice@hansondodge.com'
         }
       },
       logStatus: false
@@ -60,8 +59,19 @@ export default {
       let timeEntry = this.timeEntry
       // We dispatch the timeEntry so it can be pushed
       // onto the timeEntries array in the parent component
-      this.$dispatch('timeUpdate', timeEntry)
-      this.timeEntry = {}
+      this.$emit('log-entry', timeEntry)
+      this.timeEntry = {
+        firstName: 'Steven',
+        lastName: 'Price',
+        email: 'sprice@hansondodge.com'
+      }
+    },
+    clear () {
+      this.timeEntry = {
+        firstName: 'Steven',
+        lastName: 'Price',
+        email: 'sprice@hansondodge.com'
+      }
     }
   }
 }
