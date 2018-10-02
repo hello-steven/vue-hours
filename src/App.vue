@@ -252,27 +252,27 @@ export default {
 </script>
 
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin-top: 60px;
-  display: flex;
-  justify-content: space-between;
-  align-content: flex-start;
-  width: calc(100% - 2em);
-  max-width: 1024px;
-  box-sizing: border-box;
-  margin: 3em auto;
-}
-.main {
-  flex: 1;
-}
-.sidebar {
-  width: calc(25% - 3em);
-  margin-right: 2em;
-}
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-content: flex-start;
+    width: calc(100% - 2em);
+    max-width: 1024px;
+    box-sizing: border-box;
+    margin: 3em auto;
+  }
+  .main {
+    flex: 1;
+  }
+  .sidebar {
+    width: calc(25% - 3em);
+    margin-right: 2em;
+  }
   .list-group-item {
     display: flex;
     align-items: center;
