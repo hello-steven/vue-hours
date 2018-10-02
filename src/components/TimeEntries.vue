@@ -8,7 +8,7 @@
     <hr>
     <div class="time-entries">
       <p>Recent Entries:</p>
-      <p v-if="!timeEntries.length"><strong>No time entries yet</strong></p>
+      <p v-if="!timeEntries.length">- No time entries yet -</p>
       <div class="list-group">
         <a class="list-group-item" v-for="(timeEntry, entryId) in timeEntries" :key="entryId">
           <div class="user-details">

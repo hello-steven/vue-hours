@@ -7,22 +7,24 @@
       <button class="log" :disabled="counter.s > 0 && !counter.counterStatus ? false : true" @click="$emit('log-time')">Log</button>
     </div>
     <div class="panel-heading">
-      <h1 class="text-center">Total Time</h1>
+      <h2 class="text-center">Total Time</h2>
     </div>
     <div class="panel-body">
-      <h1 class="text-center">{{ timeEntries | formatRunningTotal }}</h1>
+      <h2 class="text-center">{{ timeEntries | formatRunningTotal }}</h2>
+      <p class="text-center">hours : minutes : seconds</p>
     </div>
   </div>
 </template>
 
 <script>
-import moment from 'moment'
+// import moment from 'moment'
 export default {
   name: 'Sidebar',
   props: {
     time: Number,
     counter: Object,
-    timeEntries: Array
+    timeEntries: Array,
+    runningTotal: Number
   },
   filters: {
     formatCounter: function (totalSeconds) {
@@ -43,18 +45,25 @@ export default {
       entries.map((entry) => {
         newRunningTotal += entry.totalTime
       })
-      let s = moment.duration(newRunningTotal).seconds()
-      let m = moment.duration(newRunningTotal).minutes()
-      let h = moment.duration(newRunningTotal).hours()
 
-      let formatted = s + ' seconds'
-      if (m >= 1) {
-        formatted = m + ' minutes'
-      }
-      if (h >= 1) {
-        formatted = h + ' hours'
-      }
-      return formatted
+      let date = new Date(null)
+      date.setSeconds(newRunningTotal / 1000) // specify value for SECONDS here
+      let newTime = date.toISOString().substr(11, 8)
+
+      // let s = moment.duration(newRunningTotal).seconds()
+      // let m = moment.duration(newRunningTotal).minutes()
+      // let h = moment.duration(newRunningTotal).hours()
+
+      // let newTime = moment(newRunningTotal).format('hh:mm:ss')
+
+      // let formatted = s + ' seconds'
+      // if (m >= 1) {
+      //   formatted = m + ' minutes'
+      // }
+      // if (h >= 1) {
+      //   formatted = h + ' hours'
+      // }
+      return newTime
     }
   }
 }
