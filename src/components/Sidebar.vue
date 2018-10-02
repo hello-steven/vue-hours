@@ -67,7 +67,7 @@ button {
   color: #000;
   font-weight: bold;
   text-transform: uppercase;
-  transition: background .25s;
+  transition: background .25s, box-shadow .05s;
   border: solid #000 2px;
   box-shadow: 3px 3px 0px #000;
   border-radius: 4px;
@@ -85,8 +85,14 @@ button {
   &.log:disabled {
     background-color: gray;
   }
+  &.danger {
+    background-color: rgb(255, 133, 133);
+  }
   &:active {
     box-shadow: none;
+  }
+  &:hover {
+    box-shadow: 1px 1px 0px #000;
   }
 }
 </style>
