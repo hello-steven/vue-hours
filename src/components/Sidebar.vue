@@ -17,7 +17,6 @@
 </template>
 
 <script>
-// import moment from 'moment'
 export default {
   name: 'Sidebar',
   props: {
@@ -46,23 +45,11 @@ export default {
         newRunningTotal += entry.totalTime
       })
 
+      // convert milliseconds to hh:mm:ss
       let date = new Date(null)
-      date.setSeconds(newRunningTotal / 1000) // specify value for SECONDS here
+      date.setSeconds(newRunningTotal / 1000)
       let newTime = date.toISOString().substr(11, 8)
 
-      // let s = moment.duration(newRunningTotal).seconds()
-      // let m = moment.duration(newRunningTotal).minutes()
-      // let h = moment.duration(newRunningTotal).hours()
-
-      // let newTime = moment(newRunningTotal).format('hh:mm:ss')
-
-      // let formatted = s + ' seconds'
-      // if (m >= 1) {
-      //   formatted = m + ' minutes'
-      // }
-      // if (h >= 1) {
-      //   formatted = h + ' hours'
-      // }
       return newTime
     }
   }
