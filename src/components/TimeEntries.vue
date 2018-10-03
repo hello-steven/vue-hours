@@ -1,13 +1,7 @@
 <template>
   <div>
-    <button
-      v-if="false"
-      class="btn btn-primary">
-      Log Time
-    </button>
-    <hr>
     <div class="time-entries">
-      <p>Recent Entries:</p>
+      <p><strong>Recent Entries:</strong></p>
       <p v-if="!timeEntries.length">- No time entries yet -</p>
       <div class="list-group">
         <a class="list-group-item" v-for="(timeEntry, entryId) in timeEntries" :key="entryId">
@@ -23,18 +17,30 @@
             </p>
           </div>
           <div class="text-center time-block">
-            <h3 class="list-group-item-text total-time" :inner-html.prop="timeEntry.totalTime | formatTotal">
-            </h3>
+            <h3 class="list-group-item-text total-time" :inner-html.prop="timeEntry.totalTime | formatTotal"></h3>
+            <p class="text-center">hours : minutes : seconds</p>
           </div>
           <div class="comment-section">
             <p>{{ timeEntry.comment }}</p>
           </div>
           <div class="entry-options">
-            <button
-              class="btn btn-xs btn-danger delete-button"
+            <!-- <button
+              class="delete-button danger"
+              title="delete entry"
               @click="deleteTimeEntry(timeEntry)">
-              X
-            </button>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M17.999 7H5.99902V19C5.99902 20.104 6.89502 21 8.00002 21H15.999C17.105 21 17.999 20.104 17.999 19V7ZM14.499 2.99902H9.499L8.5 4.00002H5.999C5.448 4.00002 5 4.44802 5 4.99902V6.00002H19V4.99902C19 4.44802 18.552 4.00002 17.999 4.00002H15.5L14.499 2.99902Z" fill="#000"/>
+              </svg>
+            </button> -->
+            <svg
+              class="delete-button"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              title="delete entry"
+              @click="deleteTimeEntry(timeEntry)">
+              <path fill="#000" fill-rule="evenodd" clip-rule="evenodd" d="M17.999 7H5.99902V19C5.99902 20.104 6.89502 21 8.00002 21H15.999C17.105 21 17.999 20.104 17.999 19V7ZM14.499 2.99902H9.499L8.5 4.00002H5.999C5.448 4.00002 5 4.44802 5 4.99902V6.00002H19V4.99902C19 4.44802 18.552 4.00002 17.999 4.00002H15.5L14.499 2.99902Z"/>
+            </svg>
           </div>
         </a>
       </div>
@@ -43,24 +49,17 @@
 </template>
 
 <script>
-import moment from 'moment'
 export default {
   props: {
     timeEntries: Array
   },
   filters: {
     formatTotal: function (total) {
-      let s = moment.duration(total).seconds()
-      let m = moment.duration(total).minutes()
-      let h = moment.duration(total).hours()
+      // convert milliseconds to hh:mm:ss
+      let date = new Date(null)
+      date.setSeconds(total / 1000)
+      let formatted = date.toISOString().substr(11, 8)
 
-      let formatted = '<i class="glyphicon glyphicon-time"></i> ' + s + ' <small>seconds</small>'
-      if (m >= 1) {
-        formatted = '<i class="glyphicon glyphicon-time"></i> ' + m + ' <small>minutes</small>'
-      }
-      if (h >= 1) {
-        formatted = '<i class="glyphicon glyphicon-time"></i> ' + h + ' <small>hours</small>'
-      }
       return formatted
     }
   },
@@ -87,6 +86,11 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 1em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
   .list-group-item-text {
     margin: 0;
@@ -95,11 +99,6 @@ export default {
     border-right: 1px solid #ddd;
     padding-right: 20px;
     margin: 0;
-  }
-  .time-block {
-    padding: 0 10px 10px;
-    border-right: 1px solid #ddd;
-    width: 150px;
   }
   .comment-section {
     padding: 20px;

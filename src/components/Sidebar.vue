@@ -79,7 +79,7 @@ button {
   }
   &.active,
   &.log.active {
-    background-color: rgb(255, 133, 143);
+    background-color: rgb(255, 239, 133);
   }
   &:disabled,
   &.log:disabled {

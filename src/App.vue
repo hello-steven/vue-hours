@@ -5,7 +5,7 @@
       <h1>Time Logs</h1>
       <hr>
       <div class="current-entry">
-        <p>Current Entry:</p>
+        <p><strong>Current Entry:</strong></p>
         <div class="list-group-item" v-if="counter.timestampStart.length">
           <div class="user-details">
             <p><strong>Start/Stop</strong></p>
@@ -19,21 +19,32 @@
             </p>
           </div>
           <div class="text-center time-block" v-if="counter.timestampPause.length">
-            <h3 class="list-group-item-text total-time" :inner-html.prop="counter.timestampStart | formatTotal(counter.timestampPause)">
-            </h3>
+            <h3 class="list-group-item-text total-time" :inner-html.prop="counter.timestampStart | formatTotal(counter.timestampPause)"></h3>
+            <p class="text-center">hours : minutes : seconds</p>
           </div>
           <div class="comment-section">
-            <input type="text" placeholder="add comment" v-model="currentProject">
+            <p><strong>Project/Comment</strong></p>
+            <input type="text" placeholder="project-00-init-review" v-model="currentProject">
           </div>
           <div class="entry-options">
-            <button
-              class="btn btn-xs btn-danger delete-button"
+            <!-- <button
+              class="delete-button danger"
+              title="delete entry"
               @click="deleteCurrent()">
-              X
-            </button>
+            </button> -->
+            <svg
+              class="delete-button"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              title="delete entry"
+              @click="deleteCurrent()">
+              <path fill="#000" fill-rule="evenodd" clip-rule="evenodd" d="M17.999 7H5.99902V19C5.99902 20.104 6.89502 21 8.00002 21H15.999C17.105 21 17.999 20.104 17.999 19V7ZM14.499 2.99902H9.499L8.5 4.00002H5.999C5.448 4.00002 5 4.44802 5 4.99902V6.00002H19V4.99902C19 4.44802 18.552 4.00002 17.999 4.00002H15.5L14.499 2.99902Z"/>
+            </svg>
           </div>
         </div>
       </div>
+      <hr>
       <TimeEntries class="entries" :timeEntries="timeEntries" v-on:delete-entry="deleteEntry"></TimeEntries>
       <hr>
       <LogTime class="logger" v-on:log-entry="logEntry"></LogTime>
@@ -99,27 +110,36 @@ export default {
       newRunningTotal += entry.totalTime
     })
     this.runningTotal = newRunningTotal
+    document.title = this.$options.filters.formatCounter(this.counter.s)
   },
   filters: {
     formatDate: function (date) {
       return moment(date).format('MM-DD-YYYY h:mm:ss a')
+    },
+    formatCounter: function (totalSeconds) {
+      var hours = Math.floor(totalSeconds / 3600)
+      var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60)
+      var seconds = totalSeconds - (hours * 3600) - (minutes * 60)
+
+      // round seconds
+      seconds = Math.round(seconds * 100) / 100
+
+      var result = (hours < 10 ? '0' + hours : hours)
+      result += ':' + (minutes < 10 ? '0' + minutes : minutes)
+      result += ':' + (seconds < 10 ? '0' + seconds : seconds)
+      return result
     },
     formatTotal: function (start, end) {
       let total = 0
       start.map((time, index) => {
         if (end[index]) total += end[index] - time
       })
-      let s = moment.duration(total).seconds()
-      let m = moment.duration(total).minutes()
-      let h = moment.duration(total).hours()
 
-      let formatted = '<i class="glyphicon glyphicon-time"></i> ' + s + ' <small>seconds</small>'
-      if (m >= 1) {
-        formatted = '<i class="glyphicon glyphicon-time"></i> ' + m + ' <small>minutes</small>'
-      }
-      if (h >= 1) {
-        formatted = '<i class="glyphicon glyphicon-time"></i> ' + h + ' <small>hours</small>'
-      }
+      // convert milliseconds to hh:mm:ss
+      let date = new Date(null)
+      date.setSeconds(total / 1000)
+      let formatted = date.toISOString().substr(11, 8)
+
       return formatted
     }
   },
@@ -144,28 +164,12 @@ export default {
       }
       this.timer = window.setInterval(() => {
         this.counter.s++
-        // if (this.counter.s >= 59) {
-        //   this.counter.s = 0
-        //   this.counter.m++
-        // } else {
-        //   this.counter.s++
-        // }
-        // if (this.counter.m >= 59) {
-        //   this.counter.m = 0
-        //   this.counter.h++
-        // }
-        // if (this.counter.h >= 7) {
-        //   this.counter.h = 0
-        //   this.counter.d++
-        // }
+        document.title = this.$options.filters.formatCounter(this.counter.s)
       }, 1000)
       return this.timer
     },
     getRunningTotal: function () {
       let newRunningTotal = 0
-      console.log({
-        entries: this.timeEntries
-      })
       this.timeEntries.map((entry) => {
         console.log({
           entry: entry
@@ -174,10 +178,6 @@ export default {
         newRunningTotal += entry.totalTime
       })
       this.runningTotal = newRunningTotal
-      console.log({
-        runningTotal: this.runningTotal,
-        newRunningTotal: newRunningTotal
-      })
     },
     logTime () {
       let formatDate = this.$options.filters.formatDate
@@ -243,6 +243,7 @@ export default {
         counterStatus: false,
         timer: null
       }
+      document.title = this.$options.filters.formatCounter(this.counter.s)
     },
     deleteEntry (index) {
       this.timeEntries.splice(index, 1)
@@ -261,6 +262,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-content: flex-start;
+    align-items: flex-start;
     width: calc(100% - 2em);
     max-width: 1024px;
     box-sizing: border-box;
@@ -270,13 +272,18 @@ export default {
     flex: 1;
   }
   .sidebar {
-    width: calc(25% - 3em);
+    width: calc(30% - 3em);
     margin-right: 2em;
+    margin-bottom: 0;
+    .panel-body:first-child {
+      margin-bottom: 20px;
+    }
   }
   .list-group-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border: none;
   }
   .list-group-item-text {
     margin: 0;
@@ -289,13 +296,51 @@ export default {
   .time-block {
     padding: 0 10px 10px;
     border-right: 1px solid #ddd;
-    width: 150px;
+    width: 200px;
   }
   .comment-section {
     padding: 20px;
     flex: 1;
+
+    input {
+      padding-left: .25em;
+    }
   }
   .entry-options {
     align-self: flex-start;
+  }
+  .entries,
+  .current-entry {
+    background-color: #ffef85;
+    padding: 1em;
+    box-sizing: border-box;
+    border-radius: 4px;
+  }
+  .entries {
+    background-color: #85e9ff;
+  }
+  .delete-button {
+    width: 30px;
+    height: 30px;
+    padding: .25em;
+    font-size: 12px;
+    line-height: 1;
+    border-radius: 3px;
+    border: solid 2px #000;
+    background-color: rgb(255, 133, 133);
+
+    path {
+      fill: #fff;
+    }
+  }
+
+  /* bootstrap overrides */
+  .panel-default {
+    border-color: #333;
+    border-radius: 0;
+    border-width: 4px;
+  }
+  .panel-default > .panel-heading {
+    border: none;
   }
 </style>
