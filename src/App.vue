@@ -2,7 +2,7 @@
   <div id="app">
     <Sidebar class="sidebar" :timeEntries="timeEntries" :time="totalTime" :runningTotal="runningTotal" :counter="counter" v-on:toggle-time="toggleTime" v-on:log-time="logTime"></Sidebar>
     <div class="main">
-      <h1>Time Logs</h1>
+      <h1>Time Tracker</h1>
       <hr>
       <div class="current-entry">
         <p><strong>Current Entry:</strong></p>
@@ -101,9 +101,6 @@ export default {
     }
   },
   mounted () {
-    console.log({
-      created: true
-    })
     let newRunningTotal = 0
     this.timeEntries.map((entry) => {
       if (!entry.totalTime) return false
@@ -267,6 +264,10 @@ export default {
     max-width: 1024px;
     box-sizing: border-box;
     margin: 3em auto;
+  }
+  h1 {
+    font-weight: bold;
+    text-transform: uppercase;
   }
   .main {
     flex: 1;
