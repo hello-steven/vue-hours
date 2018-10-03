@@ -34,7 +34,6 @@
     </div>
     <button @click="save()">Log</button>
     <button class="danger" @click="clear()">Clear</button>
-    <hr>
   </div>
 </template>
 
