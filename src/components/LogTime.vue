@@ -32,7 +32,7 @@
         />
       </div>
     </div>
-    <button @click="save()">Log</button>
+    <button class="log" @click="save()">Log</button>
     <button class="danger" @click="clear()">Clear</button>
   </div>
 </template>
