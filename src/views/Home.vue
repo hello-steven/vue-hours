@@ -108,9 +108,6 @@ export default {
     })
     this.runningTotal = newRunningTotal
     document.title = this.$options.filters.formatCounter(this.counter.s)
-    console.log({
-      envAppURL: process.env
-    })
   },
   filters: {
     formatDate: function (date) {
