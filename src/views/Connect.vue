@@ -16,13 +16,11 @@ export default {
     AuthorizeAccount
   },
   mounted: function () {
-    let appURL = process.env.VUE_APP_HOST_URL
-
     let jiraInit = {
-      baseUrl: 'YOUR_JIRA_BASE_URL',
+      baseUrl: process.env.VUE_APP_HOST_URL,
       requestToken: '/plugins/servlet/oauth/request-token',
       accessToken: '/plugins/servlet/oauth/access-token',
-      consumerKey: 'hdTimeTracker'
+      consumerKey: process.env.VUE_APP_CKEY
     }
 
     let oa = new OAuth(
@@ -31,7 +29,7 @@ export default {
       jiraInit.consumerKey,
       fs.readFileSync('jira.pem', 'utf8'),
       '1.0',
-      appURL + '/connect/callback',
+      jiraInit.baseUrl + '/connect/callback',
       'RSA-SHA1'
     )
 
