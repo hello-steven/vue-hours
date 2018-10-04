@@ -16,7 +16,7 @@ export default {
     AuthorizeAccount
   },
   mounted: function () {
-    let localURL = '172.25.9.58:8080'
+    let appURL = process.env.VUE_APP_HOST_URL
 
     let jiraInit = {
       baseUrl: 'YOUR_JIRA_BASE_URL',
@@ -31,7 +31,7 @@ export default {
       jiraInit.consumerKey,
       fs.readFileSync('jira.pem', 'utf8'),
       '1.0',
-      'http://' + localURL + '/connect/callback',
+      appURL + '/connect/callback',
       'RSA-SHA1'
     )
 
