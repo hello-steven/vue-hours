@@ -7,8 +7,8 @@
 
 <script>
 import AuthorizeAccount from '@/components/AuthorizeAccount.vue'
-import OAuth from 'oauth'
-import fs from 'fs'
+let OAuth = require('oauth')
+let fs = require('fs')
 
 export default {
   name: 'connect',
@@ -16,8 +16,15 @@ export default {
     AuthorizeAccount
   },
   mounted: function () {
+    let headers = new Headers()
+    let init = { method: 'GET',
+      headers: headers,
+      mode: 'cors',
+      cache: 'default'
+    }
     let jiraInit = {
-      baseUrl: process.env.VUE_APP_HOST_URL,
+      baseURL: process.env.VUE_APP_JIRA_URL,
+      hostURL: process.env.VUE_APP_HOST_URL,
       requestToken: '/plugins/servlet/oauth/request-token',
       accessToken: '/plugins/servlet/oauth/access-token',
       consumerKey: process.env.VUE_APP_CKEY
@@ -34,24 +41,46 @@ export default {
       jiraInit.consumerKey,
       fs.readFileSync('jira.pem', 'utf8'),
       '1.0',
-      jiraInit.baseUrl + '/connect/callback',
+      jiraInit.hostURL + '/connect/callback',
       'RSA-SHA1'
     )
 
+    let session = this.$session
+
     oa.getOAuthRequestToken(function (error, oauthToken, oauthTokenSecret) {
       if (error) {
-        console.log({errorData: error.data})
+        console.log({
+          connect: true,
+          errorData: error.data
+        })
         // eslint-disable-next-line
-        response.send('Error getting OAuth access token')
+        this.$router.push({path: '/', query: 'error'})
       } else {
         // eslint-disable-next-line
-        req.session.oa = oa
+        session.oa = oa
         // eslint-disable-next-line
-        req.session.oauth_token = oauthToken
+        session.oauth_token = oauthToken
         // eslint-disable-next-line
-        req.session.oauth_token_secret = oauthTokenSecret
-        // eslint-disable-next-line
-        return res.redirect(jiraInit.baseUrl + '/plugins/servlet/oauth/authorize?oauth_token=' + oauthToken)
+        session.oauth_token_secret = oauthTokenSecret
+
+        let request = new Request(
+          jiraInit.baseUrl + '/plugins/servlet/oauth/authorize?oauth_token=' + oauthToken,
+          init
+        )
+
+        fetch(request).then(function (response) {
+          console.log({
+            connect: true,
+            blob: response.blob()
+          })
+          return response.blob()
+        }).then(function (redirect) {
+          console.log({
+            connect: true,
+            redirect: redirect
+          })
+          return this.$router.push({path: '/', query: redirect})
+        })
       }
     })
   }

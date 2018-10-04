@@ -108,6 +108,10 @@ export default {
     })
     this.runningTotal = newRunningTotal
     document.title = this.$options.filters.formatCounter(this.counter.s)
+
+    console.log({
+      vue: this
+    })
   },
   filters: {
     formatDate: function (date) {
