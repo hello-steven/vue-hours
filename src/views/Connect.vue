@@ -23,6 +23,11 @@ export default {
       consumerKey: process.env.VUE_APP_CKEY
     }
 
+    console.log({
+      mounted: true,
+      baseURL: jiraInit.baseUrl
+    })
+
     let oa = new OAuth(
       jiraInit.baseUrl + jiraInit.requestToken,
       jiraInit.baseUrl + jiraInit.accessToken,
