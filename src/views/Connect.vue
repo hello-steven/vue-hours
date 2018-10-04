@@ -7,8 +7,8 @@
 
 <script>
 import AuthorizeAccount from '@/components/AuthorizeAccount.vue'
-let OAuth = require('oauth')
-let fs = require('fs')
+var OAuth = require('oauth')
+var fs = require('fs')
 
 export default {
   name: 'connect',
@@ -32,14 +32,14 @@ export default {
 
     console.log({
       mounted: true,
-      baseURL: jiraInit.baseUrl
+      baseURL: jiraInit.baseURL
     })
 
     let oa = new OAuth(
-      jiraInit.baseUrl + jiraInit.requestToken,
-      jiraInit.baseUrl + jiraInit.accessToken,
+      jiraInit.baseURL + jiraInit.requestToken,
+      jiraInit.baseURL + jiraInit.accessToken,
       jiraInit.consumerKey,
-      fs.readFileSync('jira.pem', 'utf8'),
+      fs.readFileSync('/jira.pem', 'utf8'),
       '1.0',
       jiraInit.hostURL + '/connect/callback',
       'RSA-SHA1'
@@ -64,7 +64,7 @@ export default {
         session.oauth_token_secret = oauthTokenSecret
 
         let request = new Request(
-          jiraInit.baseUrl + '/plugins/servlet/oauth/authorize?oauth_token=' + oauthToken,
+          jiraInit.baseURL + '/plugins/servlet/oauth/authorize?oauth_token=' + oauthToken,
           init
         )
 
