@@ -1,6 +1,5 @@
 <script>
 var OAuth = require('oauth')
-var fs = require('fs')
 
 export default {
   name: 'callback',
@@ -10,7 +9,7 @@ export default {
     let oa = new OAuth(session.oa._requestUrl,
       session.oa._accessUrl,
       session.oa._consumerKey,
-      fs.readFileSync('/jira.pem', 'utf8'),
+      process.env.VUE_APP_PEM,
       session.oa._version,
       session.oa._authorize_callback,
       session.oa._signatureMethod
