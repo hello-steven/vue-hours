@@ -45,9 +45,8 @@ export default {
   methods: {
     connect () {
       this.authorized = true
-      let request = new Request('https://jira.hansondodge.com/rest/api/2/myself', {
-        method: 'get',
-        mode: 'no-cors',
+      let request = new Request('https://jira.hansondodge.com/rest/auth/1/session', {
+        method: 'post',
         headers: new Headers({
           'Authorization': 'Basic ' + btoa(this.jiraUser + ':' + this.jiraPass),
           'Content-Type': 'application/json'
@@ -55,14 +54,15 @@ export default {
       })
       fetch(request).then(function (response) {
         console.log({
-          response: response
+          response: response.json()
         })
         // this.$emit('jira-connect', {token: true})
+        this.authorized = false
       }).catch(function (err) {
+        this.authorized = false
         console.log({
           error: err
         })
-        this.authorized = false
       })
     }
   }
