@@ -86,3 +86,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  #connect {
+    width: 90%;
+    max-width: 1024px;
+    margin: 3em auto 1em;
+  }
+</style>
