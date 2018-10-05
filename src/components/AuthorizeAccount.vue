@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     connect () {
-      this.authorized = true
+      let auth = this.authorized = true
       let request = new Request('https://jira.hansondodge.com/rest/auth/1/session', {
         method: 'post',
         headers: new Headers({
@@ -57,9 +57,9 @@ export default {
           response: response.json()
         })
         // this.$emit('jira-connect', {token: true})
-        this.authorized = false
+        auth = false
       }).catch(function (err) {
-        this.authorized = false
+        auth = false
         console.log({
           error: err
         })
