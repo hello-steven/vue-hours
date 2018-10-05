@@ -8,7 +8,6 @@
 <script>
 import AuthorizeAccount from '@/components/AuthorizeAccount.vue'
 var OAuth = require('oauth')
-var fs = require('fs')
 
 export default {
   name: 'connect',
@@ -39,7 +38,7 @@ export default {
       jiraInit.baseURL + jiraInit.requestToken,
       jiraInit.baseURL + jiraInit.accessToken,
       jiraInit.consumerKey,
-      fs.readFileSync('/jira.pem', 'utf8'),
+      process.env.VUE_APP_PEM,
       '1.0',
       jiraInit.hostURL + '/connect/callback',
       'RSA-SHA1'
