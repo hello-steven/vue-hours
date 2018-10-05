@@ -45,7 +45,7 @@ export default {
   methods: {
     connect () {
       this.authorized = true
-      let request = new Request('http://jira.hansondodge.com/rest/api/2/myself', {
+      let request = new Request('https://jira.hansondodge.com/rest/api/2/myself', {
         method: 'get',
         mode: 'no-cors',
         headers: new Headers({
