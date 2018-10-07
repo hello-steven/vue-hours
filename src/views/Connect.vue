@@ -77,7 +77,7 @@ export default {
             connect: true,
             redirect: redirect
           })
-          return this.$router.push({path: '/', query: redirect})
+          return this.$router.push({ path: '/', query: redirect })
         })
       }
     })
