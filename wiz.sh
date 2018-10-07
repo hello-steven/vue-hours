@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-BUCKET_NAME="vue-hours"
+BUCKET_NAME=`cat package.json | grep 's3_bucket_name' | awk -F\" '{print $4}'`
 
 
 create_s3_bucket() {

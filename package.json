@@ -1,5 +1,6 @@
 {
   "name": "vue-hours",
+  "s3_bucket_name": "vue-hours-0-1-0",
   "version": "0.1.0",
   "private": true,
   "scripts": {
