@@ -48,7 +48,7 @@ const mutations = {
     state.timer = window.setInterval(() => {
       state.counter.s++
     }, 1000)
-    state.timer
+    return state.timer
   },
   logTime (state, newEntry) {
     state.counter = {
@@ -95,14 +95,14 @@ const mutations = {
 // actions are functions that cause side effects and can involve
 // asynchronous operations.
 const actions = {
-  toggleTime: ({ commit }) => commit ('toggleTime'),
+  toggleTime: ({ commit }) => commit('toggleTime'),
   deleteCurrent ({ commit, state }) {
     if (state.counter.counterStatus) commit('toggleTime')
     commit('deleteCurrent')
   },
-  deleteEntry: ({ commit, entryId }) => commit ('deleteEntry', entryId),
-  logTime: ({ commit, newEntry }) => commit ('logTime', newEntry),
-  logEntry: ({ commit, newEntry }) => commit ('logEntry', newEntry)
+  deleteEntry: ({ commit, entryId }) => commit('deleteEntry', entryId),
+  logTime: ({ commit, newEntry }) => commit('logTime', newEntry),
+  logEntry: ({ commit, newEntry }) => commit('logEntry', newEntry)
 }
 
 // getters are functions
@@ -125,10 +125,10 @@ const getters = {
   },
   timeEntries: state => state.timeEntries,
   getRecentTimeEntries: state => {
-    function sortRecentTime(a,b) {
+    function sortRecentTime (a, b) {
       var dateA = new Date(a.endDate).getTime()
       var dateB = new Date(b.endDate).getTime()
-      return dateB > dateA ? 1 : -1 
+      return dateB > dateA ? 1 : -1
     }
     return state.timeEntries.sort(sortRecentTime)
   },

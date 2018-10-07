@@ -70,20 +70,20 @@ export default {
       'getRunningTotal'
     ]),
     currentProject: {
-      set(currentProject) {
+      set (currentProject) {
         this.$store.commit('updateProject', currentProject)
       },
-      get() {
+      get () {
         return this.$store.state.currentProject
       }
     }
   },
   mounted () {
     this.$store.watch(
-      (state)=>{
+      (state) => {
         return this.$store.getters.getTimerSeconds
       },
-      (time)=> {
+      (time) => {
         document.title = time
       }
     )
