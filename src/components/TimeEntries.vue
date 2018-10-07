@@ -1,10 +1,10 @@
 <template>
   <div>
+    <p><strong>Recent Entries:</strong></p>
     <div class="time-entries">
-      <p><strong>Recent Entries:</strong></p>
       <p v-if="!timeEntries.length">- No time entries yet -</p>
       <div class="list-group">
-        <a class="list-group-item" v-for="(timeEntry, entryId) in timeEntries" :key="entryId">
+        <a class="list-group-item" v-for="(timeEntry, entryId) in getRecentTimeEntries" :key="entryId">
           <div class="user-details">
             <p><strong>Start/Stop</strong></p>
             <p class="start-date">
@@ -21,24 +21,17 @@
             <p class="text-center">hours : minutes : seconds</p>
           </div>
           <div class="comment-section">
+            <p><strong>Project/Comment</strong></p>
             <p>{{ timeEntry.comment }}</p>
           </div>
           <div class="entry-options">
-            <!-- <button
-              class="delete-button danger"
-              title="delete entry"
-              @click="deleteTimeEntry(timeEntry)">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M17.999 7H5.99902V19C5.99902 20.104 6.89502 21 8.00002 21H15.999C17.105 21 17.999 20.104 17.999 19V7ZM14.499 2.99902H9.499L8.5 4.00002H5.999C5.448 4.00002 5 4.44802 5 4.99902V6.00002H19V4.99902C19 4.44802 18.552 4.00002 17.999 4.00002H15.5L14.499 2.99902Z" fill="#000"/>
-              </svg>
-            </button> -->
             <svg
               class="delete-button"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               title="delete entry"
-              @click="deleteTimeEntry(timeEntry)">
+              @click="deleteTimeEntry(entryId)">
               <path fill="#000" fill-rule="evenodd" clip-rule="evenodd" d="M17.999 7H5.99902V19C5.99902 20.104 6.89502 21 8.00002 21H15.999C17.105 21 17.999 20.104 17.999 19V7ZM14.499 2.99902H9.499L8.5 4.00002H5.999C5.448 4.00002 5 4.44802 5 4.99902V6.00002H19V4.99902C19 4.44802 18.552 4.00002 17.999 4.00002H15.5L14.499 2.99902Z"/>
             </svg>
           </div>
@@ -49,10 +42,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-  props: {
-    timeEntries: Array
-  },
+  computed: mapGetters([
+    'timeEntries',
+    'getRecentTimeEntries'
+  ]),
   filters: {
     formatTotal: function (total) {
       // convert milliseconds to hh:mm:ss
@@ -65,23 +61,26 @@ export default {
   },
   methods: {
     // Get the index of the clicked time entry and splice it out
-    deleteTimeEntry (timeEntry) {
-      let index = this.timeEntries.indexOf(timeEntry)
+    deleteTimeEntry (entryId) {
+      console.log({
+        deleteEntry: entryId
+      })
       if (window.confirm('Are you sure you want to delete this time entry?')) {
-        this.$emit('delete-entry', index)
+        this.$store.commit('deleteEntry', entryId)
       }
-    }
-  },
-  events: {
-    timeUpdate (timeEntry) {
-      this.timeEntries.push(timeEntry)
-      return true
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+  .time-entries {
+    max-height: 350px;
+    overflow: scroll;
+  }
+  .list-group {
+    margin-bottom: 0;
+  }
   .list-group-item {
     display: flex;
     align-items: center;

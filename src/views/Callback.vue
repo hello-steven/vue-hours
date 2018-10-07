@@ -17,11 +17,11 @@ export default {
     oa.getOAuthAccessToken(
       session.oauth_token,
       session.oauth_token_secret,
-      this.$router.push({path: '/', query: 'oauth_verifier'}),
+      this.$router.push({ path: '/', query: 'oauth_verifier' }),
       // eslint-disable-next-line
       function (error, oauth_access_token, oauth_access_token_secret, results2) {
         if (error) {
-          console.log({error: error})
+          console.log({ error: error })
         } else {
           // store the access token in the session
           // eslint-disable-next-line

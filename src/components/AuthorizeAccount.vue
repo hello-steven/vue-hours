@@ -44,7 +44,8 @@ export default {
   },
   methods: {
     connect () {
-      let auth = this.authorized = true
+      let auth = true
+      this.authorized = true
       let request = new Request('https://jira.hansondodge.com/rest/auth/1/session', {
         method: 'post',
         headers: new Headers({
@@ -64,6 +65,7 @@ export default {
           error: err
         })
       })
+      this.authorized = auth
     }
   }
 }
