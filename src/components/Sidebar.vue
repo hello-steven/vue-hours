@@ -25,7 +25,7 @@ export default {
   computed: mapGetters([
     'counter',
     'currentProject',
-    'getRunningTotal',
+    'getRunningTotal'
   ]),
   filters: {
     formatCounter: function (totalSeconds) {
@@ -76,7 +76,7 @@ export default {
         endDate: formatDate(newCounter.timestampEnd)
       }
       this.$store.commit('logTime', newEntry)
-    },
+    }
   }
 }
 </script>
