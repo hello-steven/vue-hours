@@ -19,3 +19,10 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+
+# jira files
+jira_privatekey.pcks8
+jira_privatekey.pem
+jira_publickkey.pem
+jira_publickey.cer
+jira.pub
