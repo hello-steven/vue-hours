@@ -43,7 +43,7 @@ do
             break
             ;;
         "Remove / Wipe Project from AWS")
-            echo "TODO: serverless wite"
+            echo "TODO: serverless wipe"
             break
             ;;
         "Quit")
