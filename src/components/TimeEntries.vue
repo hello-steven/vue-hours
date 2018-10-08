@@ -4,7 +4,7 @@
     <div class="time-entries">
       <p v-if="!timeEntries.length">- No time entries yet -</p>
       <div class="list-group">
-        <a class="list-group-item" v-for="(timeEntry, entryId) in getRecentTimeEntries" :key="entryId">
+        <a class="list-group-item" v-for="(timeEntry, entryId) in getRecentTimeEntries" @click="openDetails(entryId)" :key="entryId">
           <div class="user-details">
             <p><strong>Start/Stop</strong></p>
             <p class="start-date">
@@ -60,7 +60,9 @@ export default {
     }
   },
   methods: {
-    // Get the index of the clicked time entry and splice it out
+    openDetails (entryId) {
+      this.$store.commit('showEntry', entryId)
+    },
     deleteTimeEntry (entryId) {
       console.log({
         deleteEntry: entryId
@@ -76,7 +78,8 @@ export default {
 <style lang="scss" scoped>
   .time-entries {
     max-height: 350px;
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .list-group {
     margin-bottom: 0;

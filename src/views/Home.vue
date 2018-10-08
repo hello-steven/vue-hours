@@ -1,5 +1,6 @@
 <template>
-  <div id="home">
+  <div id="home" :class="{ 'showDetail': showDetail}">
+    <EntryDetails v-if="showDetail"></EntryDetails>
     <Sidebar class="sidebar"></Sidebar>
     <div class="main">
       <h1>Time Tracker</h1>
@@ -51,6 +52,7 @@
 import Sidebar from '@/components/Sidebar.vue'
 import TimeEntries from '@/components/TimeEntries.vue'
 import LogTime from '@/components/LogTime.vue'
+import EntryDetails from '@/components/EntryDetails.vue'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 
@@ -59,7 +61,8 @@ export default {
   components: {
     Sidebar,
     LogTime,
-    TimeEntries
+    TimeEntries,
+    EntryDetails
   },
   computed: {
     ...mapGetters([
@@ -67,7 +70,8 @@ export default {
       'counter',
       'getTimerSeconds',
       'timeEntries',
-      'getRunningTotal'
+      'getRunningTotal',
+      'showDetail'
     ]),
     currentProject: {
       set (currentProject) {

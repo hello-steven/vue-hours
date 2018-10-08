@@ -24,6 +24,17 @@
     box-sizing: border-box;
     margin: 3em auto;
   }
+
+  .showDetail .sidebar,
+  .showDetail .main {
+    transform: translateX(-100px) scale(0.8);
+    transform-origin: top left;
+  }
+
+  .showDetail .sidebar {
+    transform-origin: top right;
+  }
+
   #nav {
     display: flex;
     justify-content: flex-end;
@@ -59,11 +70,13 @@
   }
   .main {
     flex: 1;
+    transition: .25s;
   }
   .sidebar {
     width: calc(30% - 3em);
     margin-right: 2em;
     margin-bottom: 0;
+    transition: .25s;
     .panel-body:first-child {
       margin-bottom: 20px;
     }

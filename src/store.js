@@ -18,7 +18,9 @@ const state = {
     counterStatus: false,
     timer: null
   },
-  timeEntries: []
+  timeEntries: [],
+  showDetail: false,
+  showEntry: null
 }
 
 // mutations are operations that actually mutates the state.
@@ -89,6 +91,17 @@ const mutations = {
   },
   updateProject (state, currentProject) {
     state.currentProject = currentProject
+  },
+  showEntry (state, entryId) {
+    state.showDetail = true
+    state.showEntry = entryId
+  },
+  closeDetail (state) {
+    state.showDetail = false
+    state.showEntry = null
+  },
+  updateEntry (state, updatedEntry) {
+    // TODO: update edited entry values
   }
 }
 
@@ -102,11 +115,16 @@ const actions = {
   },
   deleteEntry: ({ commit, entryId }) => commit('deleteEntry', entryId),
   logTime: ({ commit, newEntry }) => commit('logTime', newEntry),
-  logEntry: ({ commit, newEntry }) => commit('logEntry', newEntry)
+  logEntry: ({ commit, newEntry }) => commit('logEntry', newEntry),
+  showDetail: ({ commit, entryId }) => commit('showDetail', entryId),
+  closeDetail: ({ commit }) => commit('closeDetail'),
+  updateEntry: ({ commit, updatedEntry }) => commit('updateEntry', updatedEntry)
 }
 
 // getters are functions
 const getters = {
+  showDetail: state => state.showDetail,
+  showEntry: state => state.showEntry,
   currentName: state => state.currentName,
   currentProject: state => state.currentProject,
   counter: state => state.counter,
