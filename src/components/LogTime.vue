@@ -5,7 +5,7 @@
       <div class="col-sm-6">
         <label>Date</label>
         <input
-          type="date"
+          type="datetime-local"
           class="form-control"
           v-model="timeEntry.date"
           placeholder="Date"
@@ -23,7 +23,7 @@
     </div>
     <div class="form-group">
       <div class="col-sm-12">
-        <label>Comment</label>
+        <label>Project/Comments</label>
         <input
           type="text"
           class="form-control"
@@ -32,13 +32,14 @@
         />
       </div>
     </div>
-    <button class="btn btn-primary" @click="save()">Start</button>
-    <button class="btn btn-danger">Cancel</button>
-    <hr>
+    <button class="log" @click="save()">Log</button>
+    <button class="danger" @click="clear()">Clear</button>
   </div>
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   data () {
     return {
@@ -48,20 +49,48 @@ export default {
         user: {
           firstName: 'Steven',
           lastName: 'Price',
-          email: 'sprice@hansondodge.com',
-          image: './assets/logo.png'
+          email: 'sprice@hansondodge.com'
         }
       },
       logStatus: false
     }
   },
+  filters: {
+    formatDate: function (date) {
+      return moment(date).format('MM-DD-YYYY h:mm:ss a')
+    }
+  },
   methods: {
     save () {
       let timeEntry = this.timeEntry
-      // We dispatch the timeEntry so it can be pushed
-      // onto the timeEntries array in the parent component
-      this.$dispatch('timeUpdate', timeEntry)
-      this.timeEntry = {}
+      let formatDate = this.$options.filters.formatDate
+      let endDate = moment(timeEntry.date).add(timeEntry.totalTime, 'h')
+      let duration = timeEntry.totalTime * 3600000 // milliseconds
+      let newEntry = {
+        user: {
+          firstName: 'Steven',
+          lastName: 'Price',
+          email: 'sprice@hansondodge.com'
+        },
+        branch: timeEntry.comment,
+        comment: timeEntry.comment,
+        totalTime: duration,
+        startDate: formatDate(timeEntry.date),
+        endDate: formatDate(endDate)
+      }
+      this.$store.commit('logEntry', newEntry)
+      this.timeEntry = {
+        firstName: 'Steven',
+        lastName: 'Price',
+        email: 'sprice@hansondodge.com'
+      }
+    },
+    clear () {
+      this.timeEntry = {
+        firstName: 'Steven',
+        lastName: 'Price',
+        email: 'sprice@hansondodge.com'
+      }
     }
   }
 }
