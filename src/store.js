@@ -100,8 +100,9 @@ const mutations = {
     state.showDetail = false
     state.showEntry = null
   },
-  updateEntry (state, updatedEntry) {
-    // TODO: update edited entry values
+  updateEntry ({ timeEntries, showEntry }, updatedEntry) {
+    Vue.set(timeEntries, showEntry, updatedEntry)
+    state.showDetail = false
   }
 }
 
@@ -118,7 +119,9 @@ const actions = {
   logEntry: ({ commit, newEntry }) => commit('logEntry', newEntry),
   showDetail: ({ commit, entryId }) => commit('showDetail', entryId),
   closeDetail: ({ commit }) => commit('closeDetail'),
-  updateEntry: ({ commit, updatedEntry }) => commit('updateEntry', updatedEntry)
+  updateEntry ({ commit, updatedEntry }) {
+    commit('updateEntry', updatedEntry)
+  }
 }
 
 // getters are functions
@@ -157,6 +160,10 @@ const getters = {
       newRunningTotal += entry.totalTime
     })
     return newRunningTotal
+  },
+  getEditableEntry: state => {
+    if (state.showEntry === null) return null
+    return state.timeEntries[state.showEntry]
   }
 }
 

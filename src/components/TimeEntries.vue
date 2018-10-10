@@ -2,22 +2,22 @@
   <div>
     <p><strong>Recent Entries:</strong></p>
     <div class="time-entries">
-      <p v-if="!timeEntries.length">- No time entries yet -</p>
+      <p v-if="!getRecentTimeEntries.length">- No time entries yet -</p>
       <div class="list-group">
         <a class="list-group-item" v-for="(timeEntry, entryId) in getRecentTimeEntries" @click="openDetails(entryId)" :key="entryId">
           <div class="user-details">
             <p><strong>Start/Stop</strong></p>
             <p class="start-date">
               @
-              {{ timeEntry.startDate}}
+              {{ timeEntry.startDate | formatDate }}
             </p>
             <p class="end-date">
               @
-              {{ timeEntry.endDate}}
+              {{ timeEntry.endDate | formatDate }}
             </p>
           </div>
           <div class="text-center time-block">
-            <h3 class="list-group-item-text total-time" :inner-html.prop="timeEntry.totalTime | formatTotal"></h3>
+            <h3 class="list-group-item-text total-time">{{ timeEntry.startDate | calcDuration(timeEntry.endDate) }}</h3>
             <p class="text-center">hours : minutes : seconds</p>
           </div>
           <div class="comment-section">
@@ -43,14 +43,28 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
   computed: mapGetters([
-    'timeEntries',
     'getRecentTimeEntries'
   ]),
   filters: {
+    formatDate: function (date) {
+      return moment(date).format('MM-DD-YYYY h:mm:ss a')
+    },
     formatTotal: function (total) {
+      // convert milliseconds to hh:mm:ss
+      let date = new Date(null)
+      date.setSeconds(total / 1000)
+      let formatted = date.toISOString().substr(11, 8)
+
+      return formatted
+    },
+    calcDuration: function (start, end) {
+      let total = 0
+      total += moment(end) - moment(start)
+
       // convert milliseconds to hh:mm:ss
       let date = new Date(null)
       date.setSeconds(total / 1000)

@@ -1,7 +1,7 @@
 <template>
   <div class="entry-details-overlay">
     <div class="entry-details">
-      <div class="fields" v-if="showDetail">
+      <div class="fields" v-if="showDetail && updatedEntry != null">
         <p><strong>Current Entry:</strong></p>
         <div class="list-group-item">
           <div class="user-details">
@@ -24,7 +24,7 @@
             </p>
           </div>
           <div class="text-center time-block">
-            <h3 class="list-group-item-text total-time">{{ updatedEntry.totalTime | formatTotal }}</h3>
+            <h3 class="list-group-item-text total-time">{{ updatedEntry.startDate | calcDuration(updatedEntry.endDate) }}</h3>
             <p class="text-center">hours : minutes : seconds</p>
           </div>
           <div class="comment-section">
@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="tools">
-        <button type="button" class="log" @click="updateEntry">update entry</button>
+        <button type="button" class="log" @click="updateEntry()">update entry</button>
         <button type="button" class="danger" @click="closeDetail">cancel</button>
       </div>
     </div>
@@ -49,34 +49,61 @@ export default {
   name: 'entry-details',
   data () {
     return {
-      updatedEntry: null
+      updatedEntry: {}
     }
   },
   computed: mapGetters([
-    'timeEntries',
     'showDetail',
-    'showEntry'
+    'getEditableEntry'
   ]),
-  created () {
-    this.updatedEntry = this.timeEntries[this.showEntry]
+  mounted () {
+    let startDate = moment(this.getEditableEntry.startDate).format().slice(0, -6)
+    let endDate = moment(this.getEditableEntry.endDate).format().slice(0, -6)
+    this.$set(this.updatedEntry, 'branch', this.getEditableEntry.comment)
+    this.$set(this.updatedEntry, 'comment', this.getEditableEntry.comment)
+    this.$set(this.updatedEntry, 'totalTime', this.getEditableEntry.totalTime)
+    this.$set(this.updatedEntry, 'user', this.getEditableEntry.user)
+    // this.updatedEntry = this.getEditableEntry
+    this.$set(this.updatedEntry, 'startDate', startDate)
+    this.$set(this.updatedEntry, 'endDate', endDate)
   },
   filters: {
-    formatTotal: function (total) {
+    formatDate: function (date) {
+      return moment(date).format('MM-DD-YYYY h:mm:ss a')
+    },
+    formatDatepicker: function (date) {
+      return moment(date).format()
+    },
+    calcDuration: function (start, end) {
+      let total = 0
+      total += moment(end) - moment(start)
+
       // convert milliseconds to hh:mm:ss
       let date = new Date(null)
       date.setSeconds(total / 1000)
+      if (!(date instanceof Date) || isNaN(date)) return 0
       let formatted = date.toISOString().substr(11, 8)
 
       return formatted
-    },
-    formatDate: function (date) {
-      return moment(date).format('MM-DD-YYYY h:mm:ss a')
     }
   },
-  methods: mapActions([
-    'closeDetail',
-    'updateEntry'
-  ])
+  methods: {
+    ...mapActions([
+      'closeDetail'
+    ]),
+    updateEntry () {
+      let formatDate = this.$options.filters.formatDate
+      let newUpdatedEntry = {
+        branch: this.updatedEntry.comment,
+        comment: this.updatedEntry.comment,
+        startDate: formatDate(this.updatedEntry.startDate),
+        endDate: formatDate(this.updatedEntry.endDate),
+        totalTime: this.updatedEntry.totalTime,
+        user: this.updatedEntry.user
+      }
+      this.$store.commit('updateEntry', newUpdatedEntry)
+    }
+  }
 }
 </script>
 
