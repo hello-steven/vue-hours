@@ -28,7 +28,7 @@ npm run lint
  - jira auth "Alternatively, you can use basic authentication, however we don't recommend this method unless you are building tools for internal use only, like scripts and bots. To learn more, read Basic auth for REST APIs."
  - initial request gets list of projects & caches project list [name, id, key, self]
  - - after initial visit, option to refresh list as needed
- - 
-
+ - [X] Set up new branch for Alie's contributions
+ - Add this comment to new readme
 
 
